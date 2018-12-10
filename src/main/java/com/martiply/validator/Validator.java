@@ -2,6 +2,7 @@ package com.martiply.validator;
 
 import com.martiply.model.interfaces.IApparelExtension;
 import com.martiply.model.interfaces.IItem;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 public class Validator {
+    private static String[] schemes = {"http","https"};
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static enum ValidatorEnum {
@@ -21,6 +23,7 @@ public class Validator {
         name("Name is required and must be at most 80 characters"),
         brand("Brand is required and must be at most 30 characters"),
         price("Price is required and has to be below 1 billion with at most 2 digits precision"),
+        url("Url needs to be valid"),
         category("Category is required and must be at most 200 characters"),
         cond("Condition is required and must be valid"),
         desc("Description must be at most 5000 characters"),
@@ -107,6 +110,16 @@ public class Validator {
             IItem.Condition.valueOf(s);
         } catch (IllegalArgumentException e){
             val = ValidatorEnum.cond;
+        }
+        return new ValidationResult(s, val);
+    }
+
+    public static ValidationResult url(String s){
+        s = s == null ? "" : s;
+        ValidatorEnum val = ValidatorEnum.url;
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (urlValidator.isValid(s)) {
+            val = ValidatorEnum.ok;
         }
         return new ValidationResult(s, val);
     }
