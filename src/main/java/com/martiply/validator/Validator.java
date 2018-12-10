@@ -115,7 +115,9 @@ public class Validator {
     }
 
     public static ValidationResult url(String s){
-        s = s == null ? "" : s;
+        if(s.equals("")){
+            return new ValidationResult(s, ValidatorEnum.ok);
+        }
         ValidatorEnum val = ValidatorEnum.url;
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (urlValidator.isValid(s)) {
