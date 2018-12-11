@@ -258,9 +258,9 @@ public class Validator {
         return new PermaResult(errors, gtin, idCustom, name, brand);
     }
 
-    public static BasicsResult basics(String price, String category, String url, String description){
-        List<ValidationResult> errors = Stream.of(price(price), category(category), url(url), description(description)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new BasicsResult(errors, price, category, url, description);
+    public static BasicsResult basics(String price, String condition, String category, String url, String description){
+        List<ValidationResult> errors = Stream.of(price(price), condition(condition), category(category), url(url), description(description)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new BasicsResult(errors, price, condition, category, url, description);
     }
 
     public static SalesResult salesTs(String salePrice, String saleStart, String saleEnd) {

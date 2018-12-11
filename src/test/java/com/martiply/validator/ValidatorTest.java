@@ -180,17 +180,26 @@ public class ValidatorTest {
     @Test
     public void basics(){
         String s1Price = "100";
+        String s1Cond = "NEW";
         String s1Category = "a;ada";
+
         String s1Url = "http://dflgf.com";
         String s1Description = "adad";
-        BasicsResult res1 = Validator.basics(s1Price, s1Category, s1Url, s1Description);
+        BasicsResult res1 = Validator.basics(s1Price, s1Cond, s1Category, s1Url, s1Description);
         assertEquals(res1.getErrors().size(), 0);
 
         String f1Url = null;
         String f1Description = "";
-        BasicsResult res2 = Validator.basics(s1Price, s1Category, f1Url, f1Description);
-        res2.getErrors().stream().forEach(System.out::println);
+        BasicsResult res2 = Validator.basics(s1Price, s1Cond, s1Category, f1Url, f1Description);
         assertEquals(res2.getErrors().size(), 0);
+
+        String f1Cond = "as";
+        BasicsResult res3 = Validator.basics(s1Price, f1Cond, s1Category, f1Url, f1Description);
+        assertEquals(res3.getErrors().size(), 1);
+
+        String f2Cond = "";
+        BasicsResult res4 = Validator.basics(s1Price, f2Cond, s1Category, f1Url, f1Description);
+        assertEquals(res4.getErrors().size(), 1);
     }
 
     @Test

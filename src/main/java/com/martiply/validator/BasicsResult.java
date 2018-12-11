@@ -10,11 +10,12 @@ import java.util.stream.Collectors;
 
 public class BasicsResult implements IItem, ValidationError {
 
-    public final String price, category, url, desc;
+    public final String price, condition, category, url, desc;
     private final List<String> errors;
 
-    public BasicsResult(List<ValidationResult> errors, String price, String category, String url, String desc) {
+    public BasicsResult(List<ValidationResult> errors, String price, String condition, String category, String url, String desc) {
         this.price = price;
+        this.condition = condition;
         this.category = category;
         this.url = url;
         this.desc = desc;
