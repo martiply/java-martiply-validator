@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.DataFormatException;
@@ -251,41 +252,43 @@ public class Validator {
     }
 
     public static PermaResult perma(String gtin, String idCustom, String name, String brand) {
-        ValidationResult vGtin = gtin(gtin);
-
-
-        List<ValidationResult> errors = Stream.of(gtin(gtin), idCustom(idCustom), name(name), brand(brand)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new PermaResult(errors, gtin, idCustom, name, brand);
+        List<ValidationResult> vals = Stream.of(gtin(gtin), idCustom(idCustom), name(name), brand(brand)).collect(Collectors.toList());
+        List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new PermaResult(errors, vals.get(0).result, vals.get(1).result, vals.get(2).result, vals.get(3).result);
     }
 
     public static BasicsResult basics(String price, String condition, String category, String url, String description){
-        List<ValidationResult> errors = Stream.of(price(price), condition(condition), category(category), url(url), description(description)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new BasicsResult(errors, price, condition, category, url, description);
+        List<ValidationResult> vals = Stream.of(price(price), condition(condition), category(category), url(url), description(description)).collect(Collectors.toList());
+        List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new BasicsResult(errors, vals.get(0).result, vals.get(1).result, vals.get(2).result, vals.get(3).result, vals.get(4).result);
     }
 
     public static SalesResult salesTs(String salePrice, String saleStart, String saleEnd) {
         if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
-            return new SalesResult(new ArrayList<>(), true, salePrice, -1L, -1L);
+            return new SalesResult(new ArrayList<>(), true, salePrice, "-1", "-1");
         }
-        List<ValidationResult> errors = Stream.of(price(salePrice, ValidatorEnum.salePrice), saleStartTs(saleStart), saleEndTs(saleEnd)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new SalesResult(errors, false, salePrice, Long.valueOf(saleStart), Long.valueOf(saleEnd));
+        List<ValidationResult> vals = Stream.of(price(salePrice, ValidatorEnum.salePrice), saleStartTs(saleStart), saleEndTs(saleEnd)).collect(Collectors.toList());
+        List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new SalesResult(errors, false, vals.get(0).result, vals.get(1).result, vals.get(2).result);
     }
 
     public static SalesResult salesDate(String salePrice, String saleStart, String saleEnd, String dateFormat) {
         if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
-            return new SalesResult(new ArrayList<>(), true, salePrice, -1L, -1L);
+            return new SalesResult(new ArrayList<>(), true, salePrice, "-1", "-1");
         }
         ValidationResult vSaleStart = saleStartDate(saleStart, dateFormat);
         ValidationResult vSaleEnd   = saleEndDate(saleEnd, dateFormat);
-        List<ValidationResult> errors = Stream.of(price(salePrice), vSaleStart, vSaleEnd).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new SalesResult(errors, false, salePrice, Long.valueOf(vSaleStart.result), Long.valueOf(vSaleEnd.result));
+        List<ValidationResult> vals = Stream.of(price(salePrice), vSaleStart, vSaleEnd).collect(Collectors.toList());
+        List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new SalesResult(errors, false, vals.get(0).result, vals.get(1).result, vals.get(2).result);
     }
 
     public static ApparelResult apparel(String gender, String age, String sizeSystem, String size, String color, String material, String feature, String groupId){
         if (Stream.of(gender, age, sizeSystem, size, color, material, feature, groupId).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 8) {
             return new ApparelResult(new ArrayList<>(), true, gender, age, sizeSystem, size, color, material, feature, groupId);
         }
-        List<ValidationResult> errors = Stream.of(gender(gender), age(age), size(sizeSystem), size(size), color(color), material(material), feature(feature), groupId(groupId)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new ApparelResult(errors, false, gender, age, sizeSystem, size, color, material, feature, groupId);
+        List<ValidationResult> vals = Stream.of(gender(gender), age(age), size(sizeSystem), size(size), color(color), material(material), feature(feature), groupId(groupId)).collect(Collectors.toList());
+        List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new ApparelResult(errors, false,  vals.get(0).result, vals.get(1).result, vals.get(2).result, vals.get(3).result, vals.get(4).result, vals.get(5).result, vals.get(6).result, vals.get(7).result);
     }
 }

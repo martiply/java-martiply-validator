@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 public class SalesResult implements ISale, ValidationError {
 
     public final String price;
-    public final Long saleStart, saleEnd;
+    public final String saleStart, saleEnd;
     private final List<String> errors;
     private boolean isIgnored;
 
-    public SalesResult(List<ValidationResult> errors, boolean isIgnored, String price, Long saleStart, Long saleEnd) {
+    public SalesResult(List<ValidationResult> errors, boolean isIgnored, String price, String saleStart, String saleEnd) {
         this.price = price;
         this.saleStart = saleStart;
         this.saleEnd = saleEnd;
@@ -37,16 +37,28 @@ public class SalesResult implements ISale, ValidationError {
 
     @Override
     public long getSaleStart() {
-        return saleStart;
+        return patchLong(saleStart);
     }
 
     @Override
     public long getSaleEnd() {
-        return saleEnd;
+        return patchLong(saleEnd);
     }
 
     @Override
     public String getId() {
         return null;
+    }
+
+    private Long patchLong(String in){
+        Long res = -1L;
+        if (saleStart != null){
+            try {
+                res = Long.valueOf(in);
+            } catch (NumberFormatException e){
+                System.out.println(e.getMessage());
+            }
+        }
+        return res;
     }
 }
