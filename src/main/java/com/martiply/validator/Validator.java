@@ -83,11 +83,11 @@ public class Validator {
     }
 
     public static ValidationResult name(String s) {
-        return maxLength(s, 80, ValidatorEnum.name);
+        return maxLengthRequired(s, 80, ValidatorEnum.name);
     }
 
     public static ValidationResult brand(String s) {
-        return maxLength(s, 30, ValidatorEnum.brand);
+        return maxLengthRequired(s, 30, ValidatorEnum.brand);
     }
 
     public static ValidationResult price(String s) {
@@ -103,7 +103,7 @@ public class Validator {
     }
 
     public static ValidationResult category(String s){
-        return maxLength(s, 200, ValidatorEnum.category);
+        return maxLengthRequired(s, 200, ValidatorEnum.category);
     }
 
     public static ValidationResult condition(String s){
@@ -118,22 +118,24 @@ public class Validator {
     }
 
     public static ValidationResult url(String s){
-        if(s.equals("")){
-            return new ValidationResult(s, ValidatorEnum.ok);
-        }
-        ValidatorEnum val = ValidatorEnum.url;
+        s = s == null ? "" : s;
+        ValidatorEnum val;
         UrlValidator urlValidator = new UrlValidator(schemes);
-        if (urlValidator.isValid(s)) {
+        if (!s.isEmpty() && urlValidator.isValid(s)) {
             val = ValidatorEnum.ok;
+        } else if(s.isEmpty()) {
+            val = ValidatorEnum.ok;
+        } else {
+            val = ValidatorEnum.url;
         }
         return new ValidationResult(s, val);
     }
 
     public static ValidationResult description(String s) {
-        return maxLength(s, 5000, ValidatorEnum.category);
+        return maxLengthCanEmpty(s, 5000, ValidatorEnum.category);
     }
 
-    private static ValidationResult maxLength(String s, int maxLength, ValidatorEnum val){
+    private static ValidationResult maxLengthRequired(String s, int maxLength, ValidatorEnum val){
         s = s == null ? "" : s;
         if (!s.isEmpty() && s.length() <= maxLength) {
             val = ValidatorEnum.ok;
@@ -229,15 +231,15 @@ public class Validator {
     }
 
     public static ValidationResult size(String s){
-        return maxLength(s, 40, ValidatorEnum.size);
+        return maxLengthRequired(s, 40, ValidatorEnum.size);
     }
 
     public static ValidationResult color(String s){
-        return maxLength(s, 40, ValidatorEnum.color);
+        return maxLengthRequired(s, 40, ValidatorEnum.color);
     }
 
     public static ValidationResult material(String s){
-        return maxLength(s, 40, ValidatorEnum.material);
+        return maxLengthRequired(s, 40, ValidatorEnum.material);
     }
 
     public static ValidationResult feature(String s){
@@ -249,6 +251,9 @@ public class Validator {
     }
 
     public static PermaResult perma(String gtin, String idCustom, String name, String brand) {
+        ValidationResult vGtin = gtin(gtin);
+
+
         List<ValidationResult> errors = Stream.of(gtin(gtin), idCustom(idCustom), name(name), brand(brand)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
         return new PermaResult(errors, gtin, idCustom, name, brand);
     }
@@ -259,19 +264,28 @@ public class Validator {
     }
 
     public static SalesResult salesTs(String salePrice, String saleStart, String saleEnd) {
+        if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
+            return new SalesResult(new ArrayList<>(), true, salePrice, -1L, -1L);
+        }
         List<ValidationResult> errors = Stream.of(price(salePrice, ValidatorEnum.salePrice), saleStartTs(saleStart), saleEndTs(saleEnd)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new SalesResult(errors, salePrice, Long.valueOf(saleStart), Long.valueOf(saleEnd));
+        return new SalesResult(errors, false, salePrice, Long.valueOf(saleStart), Long.valueOf(saleEnd));
     }
 
     public static SalesResult salesDate(String salePrice, String saleStart, String saleEnd, String dateFormat) {
+        if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
+            return new SalesResult(new ArrayList<>(), true, salePrice, -1L, -1L);
+        }
         ValidationResult vSaleStart = saleStartDate(saleStart, dateFormat);
         ValidationResult vSaleEnd   = saleEndDate(saleEnd, dateFormat);
         List<ValidationResult> errors = Stream.of(price(salePrice), vSaleStart, vSaleEnd).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new SalesResult(errors, salePrice, Long.valueOf(vSaleStart.result), Long.valueOf(vSaleEnd.result));
+        return new SalesResult(errors, false, salePrice, Long.valueOf(vSaleStart.result), Long.valueOf(vSaleEnd.result));
     }
 
     public static ApparelResult apparel(String gender, String age, String sizeSystem, String size, String color, String material, String feature, String groupId){
+        if (Stream.of(gender, age, sizeSystem, size, color, material, feature, groupId).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 8) {
+            return new ApparelResult(new ArrayList<>(), true, gender, age, sizeSystem, size, color, material, feature, groupId);
+        }
         List<ValidationResult> errors = Stream.of(gender(gender), age(age), size(sizeSystem), size(size), color(color), material(material), feature(feature), groupId(groupId)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
-        return new ApparelResult(errors, gender, age, sizeSystem, size, color, material, feature, groupId);
+        return new ApparelResult(errors, false, gender, age, sizeSystem, size, color, material, feature, groupId);
     }
 }

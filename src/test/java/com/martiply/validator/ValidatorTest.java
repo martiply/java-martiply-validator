@@ -2,7 +2,7 @@ package com.martiply.validator;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ValidatorTest {
 
@@ -175,6 +175,79 @@ public class ValidatorTest {
         String f1Name = "dggdfglfd;gkfdgkldfgfdgfdlg;fdl;gdl;gfdddddrrrrrrrrrrrrrrrrrrffffffffffffffffffffffffffffffff";
         PermaResult res3 = Validator.perma(f1Gtin, s1idCustom, f1Name, s1Brand);
         assertEquals(2, res3.getErrors().size());
+    }
+
+    @Test
+    public void basics(){
+        String s1Price = "100";
+        String s1Category = "a;ada";
+        String s1Url = "http://dflgf.com";
+        String s1Description = "adad";
+        BasicsResult res1 = Validator.basics(s1Price, s1Category, s1Url, s1Description);
+        assertEquals(res1.getErrors().size(), 0);
+
+        String f1Url = null;
+        String f1Description = "";
+        BasicsResult res2 = Validator.basics(s1Price, s1Category, f1Url, f1Description);
+        res2.getErrors().stream().forEach(System.out::println);
+        assertEquals(res2.getErrors().size(), 0);
+    }
+
+    @Test
+    public void saleTs() {
+        String s1Price = "10.33";
+        String s1Start = "10044654654";
+        String s1End   = "10044654654";
+        SalesResult res1 = Validator.salesTs(s1Price, s1Start, s1End);
+        assertEquals(0, res1.getErrors().size());
+        assertFalse(res1.isIgnored());
+
+
+        String f1Price = "10.33aaa";
+        SalesResult res2 = Validator.salesTs(f1Price, s1Start, s1End);
+        assertEquals(1, res2.getErrors().size());
+        assertFalse(res2.isIgnored());
+
+        String f2Price = null;
+        String f2Start = null;
+        String f2End = null;
+        SalesResult res3 = Validator.salesTs(f2Price, f2Start, f2End);
+        assertEquals(0, res3.getErrors().size());
+        assertTrue(res3.isIgnored());
+
+    }
+
+    @Test
+    public void apparel(){
+        String s1Age = "adult";
+        String s1Gender = "male";
+        String s1SizeSystem = "SML";
+        String s1Color = "red";
+        String s1Size = "32";
+        String s1material = "silk";
+        String s1Feature  = "";
+        String s1GroupId  = "";
+        ApparelResult res1 = Validator.apparel(s1Gender, s1Age, s1SizeSystem, s1Size, s1Color, s1material, s1Feature, s1GroupId);
+        assertEquals(0, res1.getErrors().size());
+        assertFalse(res1.isIgnored());
+
+        String f1Age = "";
+        String f1Gender = "";
+        String f1SizeSystem = null;
+        String f1Color = "";
+        String f1Size = null;
+        String f1material = null;
+        String f1Feature  = null;
+        String f1GroupId  = "";
+        ApparelResult res2= Validator.apparel(f1Gender, f1Age, f1SizeSystem, f1Size, f1Color, f1material, f1Feature, f1GroupId);
+        assertEquals(0, res2.getErrors().size());
+        assertTrue( res2.isIgnored());
+
+        String f2Size = "akdas.apsdlkasld al;sdkl;sadlasdk ka;ldklas; dkl;asdasdkasldklas";
+        String f2Feature = "alsdkls;adladadl;ajdajdajdasjdksajdklsajdkasddaskdksadas sdksakdkas kdj kasdjk'sakdasd'as";
+        ApparelResult res3 = Validator.apparel(s1Gender, s1Age, s1SizeSystem, f2Size, s1Color, s1material, f2Feature, s1GroupId);
+        assertEquals(2, res3.getErrors().size());
+        assertFalse(res1.isIgnored());
     }
 
 

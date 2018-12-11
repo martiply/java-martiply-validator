@@ -9,8 +9,9 @@ public class ApparelResult implements IApparelExtension, ValidationError {
 
     public final String gender, age, sizeSystem, size, color, material, feature, groupId;
     private final List<String> errors;
+    private final boolean isIgnored;
 
-    public ApparelResult(List<ValidationResult> errors, String gender, String age, String sizeSystem, String size, String color, String material, String feature, String groupId) {
+    public ApparelResult(List<ValidationResult> errors, boolean isIgnored, String gender, String age, String sizeSystem, String size, String color, String material, String feature, String groupId) {
         this.gender = gender;
         this.age = age;
         this.sizeSystem = sizeSystem;
@@ -20,6 +21,12 @@ public class ApparelResult implements IApparelExtension, ValidationError {
         this.feature = feature;
         this.groupId = groupId;
         this.errors = errors.stream().map(p -> p.val.toString()).collect(Collectors.toList());
+        this.isIgnored = isIgnored;
+    }
+
+    @Override
+    public boolean isIgnored() {
+        return isIgnored;
     }
 
     @Override

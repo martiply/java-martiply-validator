@@ -22,6 +22,11 @@ public class BasicsResult implements IItem, ValidationError {
     }
 
     @Override
+    public boolean isIgnored() {
+        return false;
+    }
+
+    @Override
     public List<String> getErrors() {
         return errors;
     }
