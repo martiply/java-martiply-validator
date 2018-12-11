@@ -161,6 +161,22 @@ public class ValidatorTest {
         assertEquals(Validator.ValidatorEnum.material, Validator.material(f1).val);
     }
 
+    @Test
+    public void perma(){
+        String s1Gtin = "0435345655444";
+        String s1idCustom = null;
+        String s1Name = "adasdas";
+        String s1Brand = "ddd";
+        PermaResult res1 = Validator.perma(s1Gtin, s1idCustom, s1Name, s1Brand);
+        assertEquals(res1.getErrors().size(), 0);
+        String f1Gtin = "4543";
+        PermaResult res2 = Validator.perma(f1Gtin, s1idCustom, s1Name, s1Brand);
+        assertEquals(res2.getErrors().get(0), Validator.ValidatorEnum.gtin.toString());
+        String f1Name = "dggdfglfd;gkfdgkldfgfdgfdlg;fdl;gdl;gfdddddrrrrrrrrrrrrrrrrrrffffffffffffffffffffffffffffffff";
+        PermaResult res3 = Validator.perma(f1Gtin, s1idCustom, f1Name, s1Brand);
+        assertEquals(2, res3.getErrors().size());
+    }
+
 
 
 }

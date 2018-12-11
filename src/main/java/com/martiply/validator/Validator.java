@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.DataFormatException;
 
 public class Validator {
@@ -27,6 +29,7 @@ public class Validator {
         category("Category is required and must be at most 200 characters"),
         cond("Condition is required and must be valid"),
         desc("Description must be at most 5000 characters"),
+        salePrice("Price is required and has to be below 1 billion with at most 2 digits precision"),
         ts("Timestamp has to be valid Long"),
         date("Date has to be formatted correctly"),
         gender("Gender is required and must be valid"),
@@ -245,4 +248,30 @@ public class Validator {
         return maxLengthCanEmpty(s, 30, ValidatorEnum.groupId);
     }
 
+    public static PermaResult perma(String gtin, String idCustom, String name, String brand) {
+        List<ValidationResult> errors = Stream.of(gtin(gtin), idCustom(idCustom), name(name), brand(brand)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new PermaResult(errors, gtin, idCustom, name, brand);
+    }
+
+    public static BasicsResult basics(String price, String category, String url, String description){
+        List<ValidationResult> errors = Stream.of(price(price), category(category), url(url), description(description)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new BasicsResult(errors, price, category, url, description);
+    }
+
+    public static SalesResult salesTs(String salePrice, String saleStart, String saleEnd) {
+        List<ValidationResult> errors = Stream.of(price(salePrice, ValidatorEnum.salePrice), saleStartTs(saleStart), saleEndTs(saleEnd)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new SalesResult(errors, salePrice, Long.valueOf(saleStart), Long.valueOf(saleEnd));
+    }
+
+    public static SalesResult salesDate(String salePrice, String saleStart, String saleEnd, String dateFormat) {
+        ValidationResult vSaleStart = saleStartDate(saleStart, dateFormat);
+        ValidationResult vSaleEnd   = saleEndDate(saleEnd, dateFormat);
+        List<ValidationResult> errors = Stream.of(price(salePrice), vSaleStart, vSaleEnd).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new SalesResult(errors, salePrice, Long.valueOf(vSaleStart.result), Long.valueOf(vSaleEnd.result));
+    }
+
+    public static ApparelResult apparel(String gender, String age, String sizeSystem, String size, String color, String material, String feature, String groupId){
+        List<ValidationResult> errors = Stream.of(gender(gender), age(age), size(sizeSystem), size(size), color(color), material(material), feature(feature), groupId(groupId)).filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
+        return new ApparelResult(errors, gender, age, sizeSystem, size, color, material, feature, groupId);
+    }
 }
