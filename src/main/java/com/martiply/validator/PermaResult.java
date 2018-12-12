@@ -65,11 +65,6 @@ public class PermaResult implements IItem, ValidationError {
     }
 
     @Override
-    public IdType getIdType() {
-        return null;
-    }
-
-    @Override
     public int getHits() {
         return 0;
     }
