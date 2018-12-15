@@ -31,7 +31,7 @@ public class Validator {
         category("Category is required and must be at most 200 characters"),
         cond("Condition is required and must be valid"),
         desc("Description must be at most 5000 characters"),
-        salePrice("Price is required and has to be lower than regular price and be below 1 billion with at most 2 digits precision"),
+        salePrice("Sale price is required, has to be lower than regular price, and be below 1 billion with at most 2 digits precision"),
         ts("Timestamp has to be valid Long"),
         date("Date has to be formatted correctly"),
         gender("Gender is required and must be valid"),

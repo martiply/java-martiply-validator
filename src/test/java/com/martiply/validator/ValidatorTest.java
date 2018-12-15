@@ -213,7 +213,7 @@ public class ValidatorTest {
         SalesResult res1 = Validator.salesTs(s1Price, sOrig1Price, s1Start, s1End);
         assertEquals(0, res1.getErrors().size());
         assertFalse(res1.isIgnored());
-        
+
         String f1Price = "10.33aaa";
         SalesResult res2 = Validator.salesTs(f1Price, sOrig1Price, s1Start, s1End);
         assertEquals(1, res2.getErrors().size());
