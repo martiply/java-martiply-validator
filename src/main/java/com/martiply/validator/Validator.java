@@ -4,6 +4,7 @@ import com.martiply.model.interfaces.IApparelExtension;
 import com.martiply.model.interfaces.IItem;
 import org.apache.commons.validator.routines.UrlValidator;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class Validator {
         category("Category is required and must be at most 200 characters"),
         cond("Condition is required and must be valid"),
         desc("Description must be at most 5000 characters"),
-        salePrice("Price is required and has to be below 1 billion with at most 2 digits precision"),
+        salePrice("Price is required and has to be lower than regular price and be below 1 billion with at most 2 digits precision"),
         ts("Timestamp has to be valid Long"),
         date("Date has to be formatted correctly"),
         gender("Gender is required and must be valid"),
@@ -100,6 +101,19 @@ public class Validator {
         if (!s.isEmpty() && s.matches("^[1-9]\\d{0,8}(?:\\.\\d{1,2})?$")){
             val =  ValidatorEnum.ok;
         }
+        return new ValidationResult(s, val);
+    }
+
+    private static ValidationResult salePrice(String s, String refPrice){
+        s = s == null ? "" : s;
+        ValidationResult t1 = price(s, ValidatorEnum.salePrice);
+        ValidationResult tr = price(refPrice, ValidatorEnum.salePrice);
+        if (t1.val != ValidatorEnum.ok || tr.val != ValidatorEnum.ok){
+            return new ValidationResult(s, ValidatorEnum.salePrice);
+        }
+        BigDecimal b1 = new BigDecimal(t1.result);
+        BigDecimal br = new BigDecimal(tr.result);
+        ValidatorEnum val = br.compareTo(b1) > 0 ? ValidatorEnum.ok : ValidatorEnum.salePrice;
         return new ValidationResult(s, val);
     }
 
@@ -263,11 +277,11 @@ public class Validator {
         return new BasicsResult(errors, vals.get(0).result, vals.get(1).result, vals.get(2).result, vals.get(3).result, vals.get(4).result);
     }
 
-    public static SalesResult salesTs(String salePrice, String saleStart, String saleEnd) {
+    public static SalesResult salesTs(String salePrice, String saleRef, String saleStart, String saleEnd) {
         if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
             return new SalesResult(new ArrayList<>(), true, salePrice, "-1", "-1");
         }
-        List<ValidationResult> vals = Stream.of(price(salePrice, ValidatorEnum.salePrice), saleStartTs(saleStart), saleEndTs(saleEnd)).collect(Collectors.toList());
+        List<ValidationResult> vals = Stream.of(salePrice(salePrice, saleRef), saleStartTs(saleStart), saleEndTs(saleEnd)).collect(Collectors.toList());
         List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
         return new SalesResult(errors, false, vals.get(0).result, vals.get(1).result, vals.get(2).result);
     }

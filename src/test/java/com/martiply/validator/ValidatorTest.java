@@ -2,6 +2,8 @@ package com.martiply.validator;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.*;
 
 public class ValidatorTest {
@@ -205,25 +207,28 @@ public class ValidatorTest {
     @Test
     public void saleTs() {
         String s1Price = "10.33";
+        String sOrig1Price = "12";
         String s1Start = "10044654654";
         String s1End   = "10044654654";
-        SalesResult res1 = Validator.salesTs(s1Price, s1Start, s1End);
+        SalesResult res1 = Validator.salesTs(s1Price, sOrig1Price, s1Start, s1End);
         assertEquals(0, res1.getErrors().size());
         assertFalse(res1.isIgnored());
-
-
+        
         String f1Price = "10.33aaa";
-        SalesResult res2 = Validator.salesTs(f1Price, s1Start, s1End);
+        SalesResult res2 = Validator.salesTs(f1Price, sOrig1Price, s1Start, s1End);
         assertEquals(1, res2.getErrors().size());
         assertFalse(res2.isIgnored());
 
         String f2Price = null;
         String f2Start = null;
         String f2End = null;
-        SalesResult res3 = Validator.salesTs(f2Price, f2Start, f2End);
+        SalesResult res3 = Validator.salesTs(f2Price, sOrig1Price, f2Start, f2End);
         assertEquals(0, res3.getErrors().size());
         assertTrue(res3.isIgnored());
 
+        String sOrig2Price = "7.444";
+        SalesResult res4 = Validator.salesTs(s1Price, sOrig2Price, s1Start, s1End);
+        assertEquals(1, res4.getErrors().size());
     }
 
     @Test
@@ -257,6 +262,13 @@ public class ValidatorTest {
         ApparelResult res3 = Validator.apparel(s1Gender, s1Age, s1SizeSystem, f2Size, s1Color, s1material, f2Feature, s1GroupId);
         assertEquals(2, res3.getErrors().size());
         assertFalse(res1.isIgnored());
+    }
+
+    @Test
+    public void testBg(){
+        BigDecimal a = new BigDecimal("10");
+        BigDecimal b = new BigDecimal("12");
+        System.out.println(a.compareTo(b));
     }
 
 
