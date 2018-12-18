@@ -283,13 +283,13 @@ public class Validator {
         return new SalesResult(errors, false, vals.get(0).result, vals.get(1).result, vals.get(2).result);
     }
 
-    public static SalesResult salesDate(String salePrice, String saleStart, String saleEnd, String dateFormat) {
+    public static SalesResult salesDate(String salePrice, String saleRef, String saleStart, String saleEnd, String dateFormat) {
         if (Stream.of(salePrice, saleStart, saleEnd).filter(p -> p == null || p.isEmpty()).collect(Collectors.toList()).size() == 3) {
             return new SalesResult(new ArrayList<>(), true, salePrice, "-1", "-1");
         }
         ValidationResult vSaleStart = saleStartDate(saleStart, dateFormat);
         ValidationResult vSaleEnd   = saleEndDate(saleEnd, dateFormat);
-        List<ValidationResult> vals = Stream.of(price(salePrice), vSaleStart, vSaleEnd).collect(Collectors.toList());
+        List<ValidationResult> vals = Stream.of(salePrice(salePrice, saleRef), vSaleStart, vSaleEnd).collect(Collectors.toList());
         List<ValidationResult> errors = vals.stream().filter(p -> p.val != ValidatorEnum.ok).collect(Collectors.toList());
         return new SalesResult(errors, false, vals.get(0).result, vals.get(1).result, vals.get(2).result);
     }
