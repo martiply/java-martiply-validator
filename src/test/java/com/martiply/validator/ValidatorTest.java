@@ -88,13 +88,16 @@ public class ValidatorTest {
 
     @Test
     public void saleStartDate() {
-        String s1 = "2018-09-09";
+        String s1 = "4-15-2018";
         assertEquals(Validator.ValidatorEnum.ok, Validator.saleEndDate(s1, Validator.DATE_FORMAT).val);
 
-        String s2 = "2018-09-09aa";
+        String s2 = "09-09-2018aa";
         assertEquals(Validator.ValidatorEnum.ok, Validator.saleEndDate(s2, Validator.DATE_FORMAT).val);
 
-        String f1 = "2018-September-09";
+        String s3 = "09-09-2018";
+        assertEquals(Validator.ValidatorEnum.ok, Validator.saleEndDate(s3, Validator.DATE_FORMAT).val);
+
+        String f1 = "09-September-2018";
         assertEquals(Validator.ValidatorEnum.date, Validator.saleEndDate(f1, Validator.DATE_FORMAT).val);
 
         String f2 = "2018/9/9";
@@ -263,14 +266,5 @@ public class ValidatorTest {
         assertEquals(2, res3.getErrors().size());
         assertFalse(res1.isIgnored());
     }
-
-    @Test
-    public void testBg(){
-        BigDecimal a = new BigDecimal("10");
-        BigDecimal b = new BigDecimal("12");
-        System.out.println(a.compareTo(b));
-    }
-
-
 
 }

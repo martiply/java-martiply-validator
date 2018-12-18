@@ -10,15 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.DataFormatException;
 
 public class Validator {
     private static String[] schemes = {"http","https"};
 
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
     public static enum ValidatorEnum {
         ok("ok"),
 
@@ -181,9 +179,8 @@ public class Validator {
 
     private static ValidationResult date(String s, String dateFormat){
         s = s == null ? "" : s;
-        String pattern = "yyyy-MM-dd";
         ValidatorEnum val = ValidatorEnum.ok;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
         try {
             Date date = simpleDateFormat.parse(s);
             s = String.valueOf(date.toInstant().toEpochMilli() * 1000);
