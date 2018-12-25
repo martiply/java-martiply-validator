@@ -13,7 +13,7 @@ public class PermaResult implements IItem, ValidationError {
     public final String idCustom, gtin, name, brand;
     private final List<String> errors;
 
-    public PermaResult(List<ValidationResult> errors, String idCustom, String gtin, String name, String brand) {
+    public PermaResult(List<ValidationResult> errors, String gtin, String idCustom, String name, String brand) {
         this.idCustom = idCustom;
         this.gtin = gtin;
         this.name = name;
