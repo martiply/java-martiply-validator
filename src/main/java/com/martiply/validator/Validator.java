@@ -132,16 +132,26 @@ public class Validator {
 
     public static ValidationResult url(String s){
         s = s == null ? "" : s;
+        String bare = s;
+        String withHttp;
+        if (s.startsWith("http://")){
+            bare = s.substring(7);
+        }
+        if (s.startsWith("https://")){
+            bare = s.substring(8);
+        }
+        StringBuilder x = new StringBuilder("https://");
+        withHttp = x.append(bare).toString();
         ValidatorEnum val;
         UrlValidator urlValidator = new UrlValidator(schemes);
-        if (!s.isEmpty() && urlValidator.isValid(s)) {
+        if (urlValidator.isValid(withHttp)) {
             val = ValidatorEnum.ok;
         } else if(s.isEmpty()) {
             val = ValidatorEnum.ok;
         } else {
             val = ValidatorEnum.url;
         }
-        return new ValidationResult(s, val);
+        return new ValidationResult(bare, val);
     }
 
     public static ValidationResult description(String s) {

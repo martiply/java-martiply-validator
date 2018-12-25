@@ -73,6 +73,32 @@ public class ValidatorTest {
     }
 
     @Test
+    public void urlTest(){
+        String s1 = "http://www.xxx.com/?bla=1&dor=sfg";
+        assertEquals(Validator.ValidatorEnum.ok, Validator.url(s1).val);
+        String s2 = "sub.gggg.me/apkda/";
+        assertEquals(Validator.ValidatorEnum.ok, Validator.url(s2).val);
+        String f1 = "https://";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f1).val);
+        String f2 = "htp://www.false.com/?ha=11";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f2).val);
+        String s3 = "http://www.false.com/?ja:44";
+        assertEquals(Validator.ValidatorEnum.ok, Validator.url(s3).val);
+        String f4 = "http:///www.false.com/?ha=11";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f4).val);
+        String f5 = "http:// www.false.com/?ha=11";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f5).val);
+        String f6 = "http://www.false.com/ha//a";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f6).val);
+    }
+
+    @Test
+    public void aaa(){
+        String f1 = "https://";
+        assertEquals(Validator.ValidatorEnum.url, Validator.url(f1).val);
+    }
+
+    @Test
     public void conditionTest() {
         String empty = "";
         assertEquals(Validator.ValidatorEnum.cond, Validator.condition(empty).val);
